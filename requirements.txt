@@ -1,0 +1,7 @@
+Flask
+gunicorn
+joblib
+scikit-learn
+pythainlp
+numpy
+regex
