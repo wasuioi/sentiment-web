@@ -1,3 +1,6 @@
+def split_by_space(text):
+    return text.split(' ')
+
 import joblib
 import random
 import re
@@ -8,8 +11,7 @@ from pythainlp.corpus.common import thai_stopwords as get_stopwords
 
 stopwords_list = list(get_stopwords())
 
-def split_by_space(text):
-    return text.split(' ')
+
 
 def preprocess(text):
     text = re.sub('[^ก-๙a-zA-Z]', ' ', text)
