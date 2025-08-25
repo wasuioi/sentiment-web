@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        :root {
+            --bg-color: #000000;
+            --text-color: #e7e7e7;
+            --text-secondary: #888888;
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --border-color: #2a2a2a;
+            --input-bg: #111111;
+            --input-focus-bg: #1a1a1a;
+            --result-bg: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.6);
+
+        }
+
+        body.light-theme {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e0e0e0;
+            --input-bg: #f8f8f8;
+            --input-focus-bg: #ffffff;
+            --result-bg: #f0f0f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Container for sliding pages */
+        .pages-container {
+            display: flex;
+            width: 200vw;
+            height: 100vh;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .page {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* หน้าแรก - Landing Page */
+        .landing-page {
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5rem;
+            z-index: 999;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle:hover{
+            background: rgba(142, 45, 226, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 45, 226, 0.2);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(90vh - 6rem);
+            position: relative;
+            z-index: 100;
+        }
+
+        .content {
+            max-width: 40rem;
+            margin-left: 10%;
+            z-index: 999;
+            position: relative;
+        }
+
+        .tag-box {
+            position: relative;
+            width: 15rem;
+            height: 2.5rem;
+            border-radius: 50px;
+            background: linear-gradient(to right, #656565, #7f42a7, #6600c5, #5300a0, #757575, #656565);
+            background-size: 200%;
+            animation: animationGradient 3s linear infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes animationGradient {
+            to {
+                background-position: 200%;
+            }
+        }
+
+        .tag-box .tag {
+            position: absolute;
+            inset: 3px 3px 3px 3px;
+            background-color: var(--bg-color);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.5s ease;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .tag-box .tag:hover {
+            color: #5300a0;
+        }
+
+        .content h1 {
+            font-size: 4rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            margin: 2rem 0;
+            line-height: 1.2;
+            text-shadow: 0 0 10px rgba(128, 128, 128, 0.418);
+            color: var(--text-color);
+        }
+
+        .description {
+            font-size: 1rem;
+            letter-spacing: 0.05rem;
+            max-width: 35rem;
+            color: gray;
+            color: var(--text-secondary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            position: relative;
+            right: -3.9%;
+            z-index: 999;
+        }
+
+        .btn-get-started {
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-color);
+            position: relative;
+            z-index: .1001;
+        }
+
+        .btn-get-started:hover {
+            background-color: var(--card-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signing-main {
+            scale: 1.3;
+            text-decoration: none;
+            background: linear-gradient(90deg, #8e2de2, #4a00e0);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            
+        }
+
+        .btn-signing-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(142, 45, 226, 0.4);
+        }
+
+        .robot-3d {
+            position: absolute;
+            top: 10%;
+            right: -25%;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        body.light-theme .robot-3d {
+            filter: brightness(1.3) contrast(0.9) saturate(1.1);
+        }
+
+        .robot-sliding {
+            transform: translateX(-130vw) scale(0.8);
+            top: 20%;
+        }
+
+
+        /* หน้าที่สอง - Analysis Page */
+        .analysis-page {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .robot-3d-2{
+            scale: 0.8;
+            position: absolute;
+            top: 0%;
+            transform: translateX(-165%);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1;
+            pointer-events: none;
+
+        }
+
+        .robot-3d-2.show{
+            opacity: 1;
+            left: 8%;
+        }
+
+        .analysis-container {
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px var(--shadow-color);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 100;
+        }
+
+        .analysis-container h2 {
+            position: center ;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .textarea-wrapper{
+            position: relative;
+            border-radius: 15px;
+            background: linear-gradient(to right, #656565, #7f42a7, #6600c5, #5300a0, #757575, #656565);
+            background-size: 200%;
+            animation: animationGradient 5s linear infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-container textarea {
+            width: 100%;
+            font-size: 16px;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            box-shadow: inset 0 0 10px var(--shadow-color);
+            min-height: 400px;
+            margin: 0;;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-container textarea:focus {
+            background-color: var(--input-focus-bg);
+            color: var(--text-color);
+        }
+
+        .analysis-container textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .analysis-container button {
+            background: linear-gradient(90deg, #8e2de2, #4a00e0);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-container button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .result-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--result-bg);
+            border-left: 5px solid #8e2de2;
+            color: var(--text-color);
+            font-size: 16px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(142, 45, 226, 0.2);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Back button */
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1300px) {
+            header {
+                padding: 1rem 0.5rem;
+            }
+
+            .content {
+                margin-top: 85%;
+            }
+
+            .robot-3d {
+                scale: 1.2;
+                top: 25%;
+                right: 30%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem 0.1rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .btn-signing {
+                padding: 0.6rem 1.5rem;
+            }
+
+            .content {
+                margin-top: 25rem;
+            }
+
+            .robot-3d {
+                scale: 0.5;
+                top: -16%;
+                right: 0%;
+            }
+
+            .content {
+                max-width: 30rem;
+                margin-left: 10%;
+            }
+
+            .tag-box {
+                width: 12rem;
+            }
+
+            .content h1 {
+                font-size: 2.5rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+
+            .btn-get-started {
+                font-size: 0.8rem;
+                padding: 0.5rem 1.2rem;
+            }
+
+            .btn-signing-main {
+                font-size: 0.8rem;
+                padding: 0.8rem 2rem;
+            }
+
+            .analysis-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pages-container" id="pagesContainer">
+        
+        <!-- หน้าแรก - Landing Page -->
+        <div class="page landing-page"> 
+            <div class="container">
+                <header>
+                    <h1 data-aos="fade-down" data-aos-duration="2500" class="logo">MENTAL ai</h1>
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <span id="themeIcon">🌙</span>
+                        <span id="themeText">Dark Mode</span>
+                    </button>
+                </header>
+                
+                <main>
+                    <div class="content">
+                        <div class="tag-box">
+                            <div class="tag">INTRODUCING</div>
+                        </div>
+
+                        <h1>OPEN SPACE<br>FOR EXPRESSION</h1>
+
+                        <p class="description">
+                            THIS IS A SAFE AND SUPPORTIVE SPACE WHERE YOUR THOUGHTS AND EMOTIONS ARE HEARD WITH CARE
+                        </p>
+
+                        <div class="buttons">
+                            <!-- <button class="btn-get-started"> Documentation </button> -->
+                            <button class="btn-signing-main" onclick="slideToAnalysis()">Get Started &gt;</button>
+                        </div>
+                    </div>
+                </main>
+
+                <spline-viewer class="robot-3d" id="mainRobot" url="https://prod.spline.design/ZZJDwEX334NQzWPu/scene.splinecode"></spline-viewer>
+            </div>
+            <!-- <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.39/build/spline-viewer.js"></script> -->
+        </div>
+
+        <!-- หน้าที่สอง - Analysis Page -->
+        <div class="page analysis-page">
+            
+            <button class="back-btn" onclick="slideToHome()">← Back</button>
+            <!-- <spline-viewer class="robot-3d-2" id="analysisRobot" url="https://prod.spline.design/ZZJDwEX334NQzWPu/scene.splinecode"></spline-viewer> -->
+            
+
+            <div class="analysis-container">
+                <h2>Open Space for Expression</h2>
+                <div class="subtitle">This is a safe and supportive space for your thoughts.</div>
+                <form id="textForm">
+                    <div class="textarea-wrapper">
+                        <textarea name="text" id="text" rows="5" placeholder="พิมพ์ข้อความที่นี่..."></textarea><br>
+                    </div>
+                    <button type="submit">ส่งข้อความ</button>
+                </form>
+                <div id="result"></div>
+                <spline-viewer class="robot-3d-2" id="analysisRobot" url="https://prod.spline.design/ZZJDwEX334NQzWPu/scene.splinecode"></spline-viewer>
+            </div>
+            <!-- <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.39/build/spline-viewer.js"></script> -->
+        </div>
+        
+    </div>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.39/build/spline-viewer.js"></script>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            body.classList.toggle('light-theme');
+
+            if (body.classList.contains('light-theme')) {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function(){
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            if(savedTheme === 'light'){
+                document.body.classList.add('light-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+
+            }
+        });
+    </script>
+
+    <script>
+        // ฟังก์ชันสำหรับเลื่อนไปหน้า Analysis
+        function slideToAnalysis() {
+            const container = document.getElementById('pagesContainer');
+            const mainRobot = document.getElementById('mainRobot');
+            const analysisRobot = document.getElementById('analysisRobot');
+
+            mainRobot.classList.add('robot-sliding');
+            container.style.transform = 'translateX(-100vw)';
+
+            setTimeout(() => {
+                analysisRobot.classList.add('show');
+            }, 400);
+        }
+
+        // ฟังก์ชันสำหรับกลับไปหน้าแรก
+        function slideToHome() {
+            const container = document.getElementById('pagesContainer');
+            const mainRobot = document.getElementById('mainRobot');
+            const analysisRobot = document.getElementById('analysisRobot');
+
+            analysisRobot.classList.remove('show');
+            container.style.transform = 'translateX(0)';
+
+            setTimeout(() =>{
+                mainRobot.classList.remove('robot-sliding');
+            }, 400);
+        }
+
+        // JavaScript สำหรับฟอร์ม Analysis
+        const form = document.getElementById('textForm');
+        const resultDiv = document.getElementById('result');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            resultDiv.classList.remove('show');
+
+            const formData = new FormData(form);
+            const text = formData.get('text').trim();
+            
+            if (!text) {
+                resultDiv.innerHTML = '<span style="color:#ff8888;">กรุณากรอกข้อความก่อนส่ง</span>';
+                return;
+            }
+
+            // แสดงการโหลด
+             //resultDiv.innerHTML = '<div style="color: #8e2de2;">กำลังวิเคราะห์...</div>'; 
+
+            try {
+                const res = await fetch('/analyze', { method: 'POST', body: formData});
+                if(!res.ok){
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                resultDiv.innerHTML = `<div class="result-message">${data.response}</div>`;
+                //resultDiv.classList.add('show');
+                
+            } catch (err) {
+                console.error('Error:', err);
+                resultDiv.innerHTML = '<div class="result-message" style="border-left-color: #ff8888;"><span style="color:#ff8888;">เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง</span></div>';
+            }
+        };
+
+        // เพิ่ม smooth scrolling และ animation effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // เพิ่ม animation เมื่อโหลดหน้า
+            const content = document.querySelector('.content');
+            if(content){
+                content.style.opacity = '0';
+                content.style.transform = 'translateY(30px)';
+
+                setTimeout(() => {
+                    content.style.transition = 'all 1s ease-out';
+                    content.style.opacity = '1';
+                    content.style.transform = 'translateY(0)';
+                }, 500);
+            }
+            
+            
+           
+        });
+    </script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+       AOS.init();
+    </script>
+</body>
+</html>
