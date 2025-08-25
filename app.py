@@ -1,6 +1,3 @@
-def split_by_space(text):
-    return text.split(' ')
-
 import joblib
 import random
 import re
@@ -8,10 +5,9 @@ from flask import Flask, request, jsonify, render_template
 from pythainlp import word_tokenize
 from pythainlp.corpus.common import thai_stopwords
 from pythainlp.corpus.common import thai_stopwords as get_stopwords
+from utils import split_by_space
 
 stopwords_list = list(get_stopwords())
-
-
 
 def preprocess(text):
     text = re.sub('[^ก-๙a-zA-Z]', ' ', text)
